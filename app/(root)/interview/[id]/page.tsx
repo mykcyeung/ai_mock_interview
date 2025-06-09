@@ -1,3 +1,6 @@
+import Agent from '@/components/Agent'
+import DisplayTechIcons from '@/components/DisplayTechIcons'
+import { getCurrectUser } from '@/lib/actions/auth.action'
 import { getInterviewById } from '@/lib/actions/general.action'
 import { getRandomInterviewCover } from '@/lib/utils'
 import Image from 'next/image'
@@ -6,6 +9,7 @@ import React from 'react'
 
 const page = async ({params}: RouteParams) => {
   const { id } = await params
+  const user = await getCurrectUser();
   const interview = await getInterviewById(id)
 
   if(!interview ) redirect('/')
@@ -22,9 +26,15 @@ const page = async ({params}: RouteParams) => {
               height={40}
               className='rounded-full object-cover size-[40px]'
             />
+            <h3 className='capitalize'>
+              {interview.role} Interview
+            </h3>
           </div>
+          <DisplayTechIcons techStack={interview.techstack} />
         </div>
+        <p className='bg-dark-200 px-4 py-2 rounded-lg h-fit capitalize'>{interview.type}</p>
       </div>
+      <Agent userName={user?.name || ''} userId={user?.id} interviewId={id} type='interview' questions={interview.questions}/>
     </>
   )
 }
